@@ -1,0 +1,36 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+
+    # Serve real files and directories directly
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # Redirect root and index to the homepage
+    RewriteRule ^(?:index/?$)?$ pages/homepage/home.php [L]
+
+    # Clean homepage URLs like /FirstPage -> pages/homepage/FirstPage.php
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{DOCUMENT_ROOT}/pages/homepage/$1.php -f
+    RewriteRule ^([A-Za-z0-9_-]+)/?$ pages/homepage/$1.php [L,QSA]
+
+    # Support direct homepage .php requests such as /home.php or /about.php
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{DOCUMENT_ROOT}/pages/homepage/$1.php -f
+    RewriteRule ^([A-Za-z0-9_-]+)\.php$ pages/homepage/$1.php [L,QSA]
+
+    # Fallback for nested public_html deployment: if the requested file exists there,
+    # rewrite to the nested folder without exposing it in URLs.
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{DOCUMENT_ROOT}/public_html%{REQUEST_URI} -f
+    RewriteRule ^(.*)$ /public_html/$1 [L]
+
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{DOCUMENT_ROOT}/public_html%{REQUEST_URI} -d
+    RewriteRule ^(.*)$ /public_html/$1/ [L]
+</IfModule>

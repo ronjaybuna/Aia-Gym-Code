@@ -1,0 +1,17 @@
+# Ignore environment and local secrets
+.env
+.env.local
+.env.*.local
+.env.hostinger
+
+# Ignore editor and OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Ignore logs
+logs/
+
+# Ignore PHPStorm/VS Code settings
+.idea/
+.vscode/
